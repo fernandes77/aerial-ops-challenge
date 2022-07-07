@@ -26,4 +26,4 @@ The table is located in `src/components/UserTable/index.tsx`. The mock data is i
 
 I also created the `Document` and `DocumentList` components to keep the code simpler.
 
-The `DocumentList` contains the logic for the requested breakpoint behavior.
+The `DocumentList` component contains the logic for the requested breakpoint behavior.
