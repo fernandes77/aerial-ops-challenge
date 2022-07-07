@@ -1,4 +1,4 @@
-import { Table, Group } from '@mantine/core'
+import { Table } from '@mantine/core'
 
 import DocumentList from 'components/DocumentList'
 
