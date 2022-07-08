@@ -9,24 +9,25 @@ type DocumentProps = {
   thumbnail: string
 }
 
-const Document = forwardRef(
-  ({ link, name, thumbnail }: DocumentProps, ref: ForwardedRef<any>) => {
-    const { classes } = useStyles()
+const Document = (
+  { link, name, thumbnail }: DocumentProps,
+  ref: ForwardedRef<any>
+) => {
+  const { classes } = useStyles()
 
-    return (
-      <div ref={ref} className={classes.wrapper}>
-        <div className={classes.thumbnail}>
-          <Image width={40} height={40} src={thumbnail} alt="Document" />
-        </div>
-
-        <div className={classes.linkWrapper}>
-          <Anchor href={link} target="_blank">
-            {name}
-          </Anchor>
-        </div>
+  return (
+    <div ref={ref} className={classes.wrapper}>
+      <div className={classes.thumbnail}>
+        <Image width={40} height={40} src={thumbnail} alt="Document" />
       </div>
-    )
-  }
-)
 
-export default memo(Document)
+      <div className={classes.linkWrapper}>
+        <Anchor href={link} target="_blank">
+          {name}
+        </Anchor>
+      </div>
+    </div>
+  )
+}
+
+export default memo(forwardRef(Document))
