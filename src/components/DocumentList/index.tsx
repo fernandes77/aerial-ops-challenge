@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useRef } from 'react'
 import {
   Anchor,
   Button,
@@ -7,12 +7,12 @@ import {
   ScrollArea,
   Stack
 } from '@mantine/core'
-import { useDisclosure, useResizeObserver } from '@mantine/hooks'
+import { useDisclosure, useIntersection } from '@mantine/hooks'
 import { ChevronDown, ChevronRight } from 'tabler-icons-react'
 
 import Document from 'components/Document'
 
-import { DOCUMENT_LIST_MAX_HEIGHT } from 'config/documentList'
+import { useStyles } from './useStyles'
 
 type DocumentListProps = {
   documents: {
@@ -23,21 +23,35 @@ type DocumentListProps = {
 }
 
 const DocumentList = ({ documents }: DocumentListProps) => {
+  const { classes } = useStyles()
+
   const [opened, handlers] = useDisclosure(false)
 
-  const [ref, rect] = useResizeObserver()
+  const groupRef = useRef(null)
 
-  const [isCollapsed, setIsCollapsed] = useState<boolean>(false)
-
-  useEffect(() => {
-    if (rect.height > DOCUMENT_LIST_MAX_HEIGHT) {
-      setIsCollapsed(true)
-    }
-  }, [rect.height])
+  const [ref, observedEntry] = useIntersection({
+    root: groupRef.current,
+    threshold: 1
+  })
 
   return (
-    <div ref={ref}>
-      {isCollapsed ? (
+    <div className={classes.wrapper}>
+      <Group
+        ref={groupRef}
+        className={`${classes.group} ${
+          !observedEntry?.isIntersecting && classes.groupHidden
+        }`}
+      >
+        {documents.map((document, key) => (
+          <Document
+            key={key}
+            ref={key === documents.length - 1 ? ref : undefined}
+            {...document}
+          />
+        ))}
+      </Group>
+
+      {!observedEntry?.isIntersecting && (
         <Popover
           opened={opened}
           onClose={() => handlers.close()}
@@ -53,7 +67,7 @@ const DocumentList = ({ documents }: DocumentListProps) => {
           position="bottom"
         >
           <ScrollArea type="scroll">
-            <div style={{ maxHeight: 256 }}>
+            <div className={classes.scrollDropdown}>
               <Stack>
                 {documents.map((document, key) => (
                   <Anchor key={key} href={document.link}>
@@ -64,12 +78,6 @@ const DocumentList = ({ documents }: DocumentListProps) => {
             </div>
           </ScrollArea>
         </Popover>
-      ) : (
-        <Group>
-          {documents.map((document, key) => (
-            <Document key={key} {...document} />
-          ))}
-        </Group>
       )}
     </div>
   )

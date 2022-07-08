@@ -1,3 +1,4 @@
+import { ForwardedRef, forwardRef, memo } from 'react'
 import { Anchor, Image } from '@mantine/core'
 
 import { useStyles } from './useStyles'
@@ -8,22 +9,24 @@ type DocumentProps = {
   thumbnail: string
 }
 
-const Document = ({ link, name, thumbnail }: DocumentProps) => {
-  const { classes } = useStyles()
+const Document = forwardRef(
+  ({ link, name, thumbnail }: DocumentProps, ref: ForwardedRef<any>) => {
+    const { classes } = useStyles()
 
-  return (
-    <div className={classes.wrapper}>
-      <div className={classes.thumbnail}>
-        <Image width={40} height={40} src={thumbnail} alt="Document" />
+    return (
+      <div ref={ref} className={classes.wrapper}>
+        <div className={classes.thumbnail}>
+          <Image width={40} height={40} src={thumbnail} alt="Document" />
+        </div>
+
+        <div className={classes.linkWrapper}>
+          <Anchor href={link} target="_blank">
+            {name}
+          </Anchor>
+        </div>
       </div>
+    )
+  }
+)
 
-      <div className={classes.linkWrapper}>
-        <Anchor href={link} target="_blank">
-          {name}
-        </Anchor>
-      </div>
-    </div>
-  )
-}
-
-export default Document
+export default memo(Document)
